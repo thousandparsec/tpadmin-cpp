@@ -20,8 +20,8 @@ class QuitCommand : public tprl::RLCommand
     
     void action(const std::string & cmdline)
     {
-        if(Session::getSession()->layer->getStatus != asDisconnected)
-            Session::getSession()->layer->disconnect();
+        if(Session::getSession()->getAdminLayer()->getStatus() != TPProto::asDisconnected)
+            Session::getSession()->getAdminLayer()->disconnect();
         Session::getSession()->stopMainLoop();
     }
 };
@@ -39,8 +39,8 @@ class OpenCommand : public tprl::RLCommand
     {
         std::string address, user, password;
         //TODO - parse cmdline into address, user, password
-        if(Session::getSession()->layer->connect(address)){
-            if(Session::getSession()->layer->login(user, password)){
+        if(Session::getSession()->getAdminLayer()->connect(address)){
+            if(Session::getSession()->getAdminLayer()->login(user, password)){
                 //TODO - do something?
             }
         }
@@ -58,8 +58,8 @@ class CloseCommand : public tprl::RLCommand
 
     void action(const std::string & cmdline)
     {
-        if(Session::getSession()->layer->getStatus != asDisconnected)
-            Session::getSession()->layer->disconnect();
+        if(Session::getSession()->getAdminLayer()->getStatus() != TPProto::asDisconnected)
+            Session::getSession()->getAdminLayer()->disconnect();
     }
 };
 
@@ -106,6 +106,16 @@ void Session::stopMainLoop()
 void Session::addCommand(tprl::RLCommand * command)
 {
     commands.insert(command);
+}
+
+TPProto::AdminLayer * Session::getAdminLayer() const
+{
+    return layer;
+}
+
+tprl::Console * Session::getConsole() const
+{
+    return myConsole;
 }
 
 Session::Session()

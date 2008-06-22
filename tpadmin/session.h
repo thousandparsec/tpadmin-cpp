@@ -29,6 +29,9 @@ class Session
 
     void addCommand(tprl::RLCommand * command);
 
+    TPProto::AdminLayer * getAdminLayer() const;
+    tprl::Console * getConsole() const;
+
   private:
     Session();
     virtual ~Session();

@@ -1,6 +1,10 @@
 #include <iostream>
 #include <time.h>
 
+#include <tprl/console.h>
+
+#include "session.h"
+
 #include "consolelogger.h"
 
 ConsoleLogger::ConsoleLogger()
@@ -11,7 +15,7 @@ ConsoleLogger::~ConsoleLogger()
 {
 }
 
-void ConsoleLogger::error(char * mesg, ...)
+void ConsoleLogger::error(const char * mesg, ...)
 {
     char timeStr[30];
     time_t currTime = time(NULL);
@@ -19,10 +23,10 @@ void ConsoleLogger::error(char * mesg, ...)
     strftime(timeStr, 30, "%F %H:%M:%S", localtime(&currTime));
     std::cout << "\r" << timeStr << "\e[31;1m < Error > " << mesg << std::endl;
 
-    Session::getSession()->myConsole->redrawLineForced();
+    Session::getSession()->getConsole()->redrawLineForced();
 }
 
-void ConsoleLogger::warning(char * mesg, ...)
+void ConsoleLogger::warning(const char * mesg, ...)
 {
     char timeStr[30];
     time_t currTime = time(NULL);
@@ -30,10 +34,10 @@ void ConsoleLogger::warning(char * mesg, ...)
     strftime(timeStr, 30, "%F %H:%M:%S", localtime(&currTime));
     std::cout << "\r" << timeStr << "\e[33;1m <Warning> " << mesg << std::endl;
 
-    Session::getSession()->myConsole->redrawLineForced();
+    Session::getSession()->getConsole()->redrawLineForced();
 }
 
-void ConsoleLogger::info(char * mesg, ...)
+void ConsoleLogger::info(const char * mesg, ...)
 {
     char timeStr[30];
     time_t currTime = time(NULL);
@@ -41,10 +45,10 @@ void ConsoleLogger::info(char * mesg, ...)
     strftime(timeStr, 30, "%F %H:%M:%S", localtime(&currTime));
     std::cout << "\r" << timeStr << "\e[32;1m < Info  > " << mesg << std::endl;
 
-    Session::getSession()->myConsole->redrawLineForced();
+    Session::getSession()->getConsole()->redrawLineForced();
 }
 
-void ConsoleLogger::debug(char * mesg, ...)
+void ConsoleLogger::debug(const char * mesg, ...)
 {
     char timeStr[30];
     time_t currTime = time(NULL);
@@ -52,6 +56,6 @@ void ConsoleLogger::debug(char * mesg, ...)
     strftime(timeStr, 30, "%F %H:%M:%S", localtime(&currTime));
     std::cout << "\r" << timeStr << " < Debug > " << mesg << std::endl;
 
-    Session::getSession()->myConsole->redrawLineForced();
+    Session::getSession()->getConsole()->redrawLineForced();
 }
 
