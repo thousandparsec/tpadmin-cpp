@@ -5,6 +5,8 @@
 
 #include <tpproto/adminlayer.h>
 
+#include "consolelogger.h"
+
 #include "session.h"
 
 class QuitCommand : public tprl::RLCommand
@@ -108,9 +110,11 @@ void Session::addCommand(tprl::RLCommand * command)
 
 Session::Session()
 {
+    logger = new ConsoleLogger();
+
     layer = new TPProto::AdminLayer();
     layer->setClientString("tpadmin-cpp/0.0.1");
-    //layer->setLogger(logger);
+    layer->setLogger(logger);
     //layer->setEventLoop(eventloop);
 
     commands.clear();

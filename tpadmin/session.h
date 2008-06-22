@@ -14,6 +14,8 @@ namespace TPProto
     class AdminLayer;
 }
 
+class ConsoleLogger;
+
 class Session
 {
   public:
@@ -35,6 +37,8 @@ class Session
 
     tprl::Console * myConsole;
     std::set<tprl::RLCommand*> commands;
+
+    ConsoleLogger * logger;
 
     TPProto::AdminLayer * layer;
 
