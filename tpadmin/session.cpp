@@ -3,6 +3,8 @@
 #include <tprl/console.h>
 #include <tprl/rlcommand.h>
 
+#include <tpproto/adminlayer.h>
+
 #include "session.h"
 
 class QuitCommand : public tprl::RLCommand
@@ -16,7 +18,8 @@ class QuitCommand : public tprl::RLCommand
     
     void action(const std::string & cmdline)
     {
-        //TODO - close server connection, if any
+        if(Session::getSession()->layer->getStatus != asDisconnected)
+            Session::getSession()->layer->disconnect();
         Session::getSession()->stopMainLoop();
     }
 };
@@ -32,7 +35,13 @@ class OpenCommand : public tprl::RLCommand
 
     void action(const std::string & cmdline)
     {
-        //TODO - open new server connection
+        std::string address, user, password;
+        //TODO - parse cmdline into address, user, password
+        if(Session::getSession()->layer->connect(address)){
+            if(Session::getSession()->layer->login(user, password)){
+                //TODO - do something?
+            }
+        }
     }
 };
 
@@ -47,7 +56,8 @@ class CloseCommand : public tprl::RLCommand
 
     void action(const std::string & cmdline)
     {
-        //TODO - close server connection, if any
+        if(Session::getSession()->layer->getStatus != asDisconnected)
+            Session::getSession()->layer->disconnect();
     }
 };
 
@@ -98,6 +108,11 @@ void Session::addCommand(tprl::RLCommand * command)
 
 Session::Session()
 {
+    layer = new TPProto::AdminLayer();
+    layer->setClientString("tpadmin-cpp/0.0.1");
+    //layer->setLogger(logger);
+    //layer->setEventLoop(eventloop);
+
     commands.clear();
 
     commands.insert(new QuitCommand());

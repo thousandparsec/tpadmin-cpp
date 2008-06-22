@@ -9,6 +9,11 @@ namespace tprl
     class RLCommand;
 }
 
+namespace TPProto
+{
+    class AdminLayer;
+}
+
 class Session
 {
   public:
@@ -30,6 +35,8 @@ class Session
 
     tprl::Console * myConsole;
     std::set<tprl::RLCommand*> commands;
+
+    TPProto::AdminLayer * layer;
 
     volatile bool halt;
 
