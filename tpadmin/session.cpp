@@ -37,13 +37,23 @@ class OpenCommand : public tprl::RLCommand
 
     void action(const std::string & cmdline)
     {
-        std::string address, user, password;
-        //TODO - parse cmdline into address, user, password
-        if(Session::getSession()->getAdminLayer()->connect(address)){
-            if(Session::getSession()->getAdminLayer()->login(user, password)){
-                //TODO - do something?
-            }
-        }
+        Session::getSession()->getAdminLayer()->connect(cmdline);
+    }
+};
+
+class LoginCommand : public tprl::RLCommand
+{
+  public:
+    LoginCommand() : tprl::RLCommand()
+    {
+        name = "login";
+        help = "Log in to administration on a TP server.";
+    }
+
+    void action(const std::string & cmdline)
+    {
+        size_t p = cmdline.find(' ');
+        Session::getSession()->getAdminLayer()->login(cmdline.substr(0, p), cmdline.substr(p + 1));
     }
 };
 
@@ -131,6 +141,7 @@ Session::Session()
 
     commands.insert(new QuitCommand());
     commands.insert(new OpenCommand());
+    commands.insert(new LoginCommand());
     commands.insert(new CloseCommand());
 
     halt = false;
