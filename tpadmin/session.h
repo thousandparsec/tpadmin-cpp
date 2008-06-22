@@ -32,6 +32,7 @@ namespace tprl
 namespace TPProto
 {
     class AdminLayer;
+    class SimpleEventLoop;
 }
 
 class ConsoleLogger;
@@ -62,7 +63,7 @@ class Session
     std::set<tprl::RLCommand*> commands;
 
     ConsoleLogger * logger;
-
+    TPProto::SimpleEventLoop * eventloop;
     TPProto::AdminLayer * layer;
 
     volatile bool halt;

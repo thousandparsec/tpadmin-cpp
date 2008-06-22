@@ -24,6 +24,7 @@
 #include <tprl/rlcommand.h>
 
 #include <tpproto/adminlayer.h>
+#include <tpproto/simpleeventloop.h>
 
 #include "consolelogger.h"
 
@@ -152,10 +153,12 @@ Session::Session()
 {
     logger = new ConsoleLogger();
 
+    eventloop = new TPProto::SimpleEventLoop();
+
     layer = new TPProto::AdminLayer();
     layer->setClientString("tpadmin-cpp/0.0.1");
     layer->setLogger(logger);
-    //layer->setEventLoop(eventloop);
+    layer->setEventLoop(eventloop);
 
     commands.clear();
 
