@@ -18,6 +18,7 @@
  *
  */
 
+#include <iostream>
 #include <signal.h>
 
 #include "session.h"
@@ -38,6 +39,7 @@ int main(int argc, char ** argv)
     mySession->mainLoop();
 
     mySession->stop();
+    std::cout << std::endl;
 
     return 0;
 }
