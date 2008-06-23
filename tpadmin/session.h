@@ -52,6 +52,7 @@ class Session
 
     TPProto::AdminLayer * getAdminLayer() const;
     tprl::Console * getConsole() const;
+    ConsoleLogger * getLogger() const;
 
   private:
     Session();

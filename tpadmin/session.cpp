@@ -58,7 +58,12 @@ class OpenCommand : public tprl::RLCommand
 
     void action(const std::string & cmdline)
     {
-        Session::getSession()->getAdminLayer()->connect(cmdline);
+        if(Session::getSession()->getAdminLayer()->getStatus() == TPProto::asDisconnected){
+            if(Session::getSession()->getAdminLayer()->connect(cmdline))
+                Session::getSession()->getLogger()->debug("Connect frame sent to server.");
+        }else{
+            Session::getSession()->getLogger()->warning("Already connected to a server.");
+        }
     }
 };
 
@@ -73,8 +78,14 @@ class LoginCommand : public tprl::RLCommand
 
     void action(const std::string & cmdline)
     {
-        size_t p = cmdline.find(' ');
-        Session::getSession()->getAdminLayer()->login(cmdline.substr(0, p), cmdline.substr(p + 1));
+        if(Session::getSession()->getAdminLayer()->getStatus() == TPProto::asConnected){
+            size_t p = cmdline.find(' ');
+            if(Session::getSession()->getAdminLayer()->login(cmdline.substr(0, p), cmdline.substr(p + 1)))
+                Session::getSession()->getLogger()->debug("Login frame sent to server.");
+        }else{
+            Session::getSession()->getLogger()->warning("Not connected or already logged in.");
+        }
+
     }
 };
 
@@ -147,6 +158,11 @@ TPProto::AdminLayer * Session::getAdminLayer() const
 tprl::Console * Session::getConsole() const
 {
     return myConsole;
+}
+
+ConsoleLogger * Session::getLogger() const
+{
+    return logger;
 }
 
 Session::Session()
