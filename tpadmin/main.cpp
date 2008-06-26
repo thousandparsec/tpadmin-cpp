@@ -36,9 +36,6 @@ int main(int argc, char ** argv)
     Session * mySession = Session::getSession();
     mySession->start();
 
-    mySession->mainLoop();
-
-    mySession->stop();
     std::cout << std::endl;
 
     return 0;

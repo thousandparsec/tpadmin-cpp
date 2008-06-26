@@ -19,6 +19,7 @@
  */
 
 #include <string.h>
+#include <boost/bind.hpp>
 
 #include <tprl/console.h>
 #include <tprl/rlcommand.h>
@@ -125,11 +126,19 @@ void Session::start()
         console->setPrompt("tpadmin-cpp> ");
         console->readLine_nb_start();
     }
+
+    eventloop->setTimer(1, boost::bind(&Session::mainLoop, this));
+    eventloop->runEventLoop();
 }
 
 void Session::stop()
 {
     console->readLine_nb_stop();
+
+    if(layer->getStatus() != TPProto::asDisconnected)
+        layer->disconnect();
+
+    eventloop->endEventLoop();
 }
 
 void Session::mainLoop()
@@ -138,6 +147,8 @@ void Session::mainLoop()
     {
         console->readLine_nb_inputReady();
     }
+
+    stop();
 }
 
 void Session::stopMainLoop()
@@ -190,5 +201,9 @@ Session::~Session()
 {
     if(console != NULL)
         delete console;
+
+    delete layer;
+    delete logger;
+    delete eventloop;
 }
 
