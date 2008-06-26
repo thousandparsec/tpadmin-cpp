@@ -116,27 +116,27 @@ Session * Session::getSession()
 
 void Session::start()
 {
-    if(myConsole == NULL)
+    if(console == NULL)
     {
-        myConsole = tprl::Console::getConsole();
-        myConsole->setCatchSignals(false);
-        myConsole->setUseHistory(true);
-        myConsole->setCommandSet(&commands);
-        myConsole->setPrompt("tpadmin-cpp> ");
-        myConsole->readLine_nb_start();
+        console = tprl::Console::getConsole();
+        console->setCatchSignals(false);
+        console->setUseHistory(true);
+        console->setCommandSet(&commands);
+        console->setPrompt("tpadmin-cpp> ");
+        console->readLine_nb_start();
     }
 }
 
 void Session::stop()
 {
-    myConsole->readLine_nb_stop();
+    console->readLine_nb_stop();
 }
 
 void Session::mainLoop()
 {
     while(!halt)
     {
-        myConsole->readLine_nb_inputReady();
+        console->readLine_nb_inputReady();
     }
 }
 
@@ -157,7 +157,7 @@ TPProto::AdminLayer * Session::getAdminLayer() const
 
 tprl::Console * Session::getConsole() const
 {
-    return myConsole;
+    return console;
 }
 
 ConsoleLogger * Session::getLogger() const
@@ -188,7 +188,7 @@ Session::Session()
 
 Session::~Session()
 {
-    if(myConsole != NULL)
-        delete myConsole;
+    if(console != NULL)
+        delete console;
 }
 

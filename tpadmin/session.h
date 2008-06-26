@@ -60,7 +60,7 @@ class Session
 
     static Session * myInstance;
 
-    tprl::Console * myConsole;
+    tprl::Console * console;
     std::set<tprl::RLCommand*> commands;
 
     ConsoleLogger * logger;
