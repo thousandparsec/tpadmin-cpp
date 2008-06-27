@@ -18,6 +18,7 @@
  *
  */
 
+#include <sstream>
 #include <string.h>
 #include <boost/bind.hpp>
 
@@ -26,8 +27,10 @@
 
 #include <tpproto/adminlayer.h>
 #include <tpproto/simpleeventloop.h>
+#include <tpproto/commanddesccache.h>
 
 #include "consolelogger.h"
+#include "clientasl.h"
 
 #include "session.h"
 
@@ -59,9 +62,12 @@ class OpenCommand : public tprl::RLCommand
 
     void action(const std::string & cmdline)
     {
+        std::ostringstream msg;
         if(Session::getSession()->getAdminLayer()->getStatus() == TPProto::asDisconnected){
-            if(Session::getSession()->getAdminLayer()->connect(cmdline))
-                Session::getSession()->getLogger()->debug("Connect frame sent to server.");
+            if(Session::getSession()->getAdminLayer()->connect(cmdline)){
+                msg << "Connected ok, status: " << Session::getSession()->getAdminLayer()->getStatus();
+                Session::getSession()->getLogger()->debug(msg.str().c_str());
+            }
         }else{
             Session::getSession()->getLogger()->warning("Already connected to a server.");
         }
@@ -79,14 +85,16 @@ class LoginCommand : public tprl::RLCommand
 
     void action(const std::string & cmdline)
     {
+        std::ostringstream msg;
         if(Session::getSession()->getAdminLayer()->getStatus() == TPProto::asConnected){
             size_t p = cmdline.find(' ');
-            if(Session::getSession()->getAdminLayer()->login(cmdline.substr(0, p), cmdline.substr(p + 1)))
-                Session::getSession()->getLogger()->debug("Login frame sent to server.");
+            if(Session::getSession()->getAdminLayer()->login(cmdline.substr(0, p), cmdline.substr(p + 1))){
+                msg << "Login ok, status: " << Session::getSession()->getAdminLayer()->getStatus();
+                Session::getSession()->getLogger()->debug(msg.str().c_str());
+            }
         }else{
             Session::getSession()->getLogger()->warning("Not connected or already logged in.");
         }
-
     }
 };
 
@@ -156,6 +164,15 @@ void Session::stopMainLoop()
     halt = true;
 }
 
+void Session::getCommands()
+{
+    layer->getCommandDescCache()->requestCommandTypes(boost::bind(&Session::receiveCommands, this, _1));
+}
+
+void Session::receiveCommands(std::set<uint32_t> ids)
+{
+}
+
 void Session::addCommand(tprl::RLCommand * command)
 {
     commands.insert(command);
@@ -182,10 +199,13 @@ Session::Session()
 
     eventloop = new TPProto::SimpleEventLoop();
 
+    ClientASL * listener = new ClientASL();
+
     layer = new TPProto::AdminLayer();
     layer->setClientString("tpadmin-cpp/0.0.1");
     layer->setLogger(logger);
     layer->setEventLoop(eventloop);
+    layer->setAdminStatusListener(listener);
 
     commands.clear();
 

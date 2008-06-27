@@ -48,6 +48,8 @@ class Session
     void mainLoop();
     void stopMainLoop();
 
+    void getCommands();
+    void receiveCommands(std::set<uint32_t> ids);
     void addCommand(tprl::RLCommand * command);
 
     TPProto::AdminLayer * getAdminLayer() const;
