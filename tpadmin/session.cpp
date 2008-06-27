@@ -199,13 +199,11 @@ Session::Session()
 
     eventloop = new TPProto::SimpleEventLoop();
 
-    ClientASL * listener = new ClientASL();
-
     layer = new TPProto::AdminLayer();
     layer->setClientString("tpadmin-cpp/0.0.1");
     layer->setLogger(logger);
     layer->setEventLoop(eventloop);
-    layer->setAdminStatusListener(listener);
+    layer->setAdminStatusListener(new ClientASL());
 
     commands.clear();
 
