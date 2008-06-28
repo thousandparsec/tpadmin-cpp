@@ -1,4 +1,4 @@
-/*  Main method for tpadmin-cpp
+/*  Console - libtprl Console wrapper socket for use in an EventLoop
  *
  *  Copyright (C) 2008 Aaron Mavrinac and the Thousand Parsec Project
  *
@@ -18,25 +18,39 @@
  *
  */
 
-#include <iostream>
-#include <signal.h>
+#ifndef CONSOLE_H
+#define CONSOLE_H
 
-#include "session.h"
+#include <set>
 
-void sigIntHandler(int sig)
+#include <tpproto/tpsocket.h>
+
+namespace tprl
 {
-    Session::getSession()->stop();
+    class Console;
+    class RLCommand;
 }
 
-int main(int argc, char ** argv)
-{
-    signal(SIGINT, sigIntHandler);
-    signal(SIGTERM, sigIntHandler);
+class Console : public TPProto::TPSocket{
+  public:
+    Console();
+    virtual ~Console();
 
-    Session * mySession = Session::getSession();
-    mySession->start();
+    bool isConnected();
+    bool connect();
+    void disconnect();
+    int send(const char * data, int len);
+    int recv(int len, char * data);
 
-    std::cout << std::endl;
+    void start();
+    void stop();
 
-    return 0;
-}
+    void setCommandSet(std::set<tprl::RLCommand*> * set);
+
+  private:
+    tprl::Console * rlconsole;
+
+    int status;
+};
+
+#endif

@@ -22,13 +22,13 @@
 #include <string.h>
 #include <boost/bind.hpp>
 
-#include <tprl/console.h>
 #include <tprl/rlcommand.h>
 
 #include <tpproto/adminlayer.h>
 #include <tpproto/simpleeventloop.h>
 #include <tpproto/commanddesccache.h>
 
+#include "console.h"
 #include "consolelogger.h"
 #include "clientasl.h"
 
@@ -47,7 +47,7 @@ class QuitCommand : public tprl::RLCommand
     {
         if(Session::getSession()->getAdminLayer()->getStatus() != TPProto::asDisconnected)
             Session::getSession()->getAdminLayer()->disconnect();
-        Session::getSession()->stopMainLoop();
+        Session::getSession()->stop();
     }
 };
 
@@ -125,43 +125,25 @@ Session * Session::getSession()
 
 void Session::start()
 {
-    if(console == NULL)
-    {
-        console = tprl::Console::getConsole();
-        console->setCatchSignals(false);
-        console->setUseHistory(true);
-        console->setCommandSet(&commands);
-        console->setPrompt("tpadmin-cpp> ");
-        console->readLine_nb_start();
-    }
+    console = new Console();
+    console->setCommandSet(&commands);
+    if(console->connect())
+        logger->debug("Console connected");
+    console->start();
 
-    eventloop->setTimer(1, boost::bind(&Session::mainLoop, this));
+    eventloop->listenForSocketRead(console);
     eventloop->runEventLoop();
 }
 
 void Session::stop()
 {
-    console->readLine_nb_stop();
+    console->disconnect();
+    console->stop();
 
     if(layer->getStatus() != TPProto::asDisconnected)
         layer->disconnect();
 
     eventloop->endEventLoop();
-}
-
-void Session::mainLoop()
-{
-    while(!halt)
-    {
-        console->readLine_nb_inputReady();
-    }
-
-    stop();
-}
-
-void Session::stopMainLoop()
-{
-    halt = true;
 }
 
 void Session::getCommands()
@@ -183,7 +165,7 @@ TPProto::AdminLayer * Session::getAdminLayer() const
     return layer;
 }
 
-tprl::Console * Session::getConsole() const
+Console * Session::getConsole() const
 {
     return console;
 }
@@ -211,8 +193,6 @@ Session::Session()
     commands.insert(new OpenCommand());
     commands.insert(new LoginCommand());
     commands.insert(new CloseCommand());
-
-    halt = false;
 }
 
 Session::~Session()

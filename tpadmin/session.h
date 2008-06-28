@@ -25,7 +25,6 @@
 
 namespace tprl
 {
-    class Console;
     class RLCommand;
 }
 
@@ -35,6 +34,7 @@ namespace TPProto
     class SimpleEventLoop;
 }
 
+class Console;
 class ConsoleLogger;
 
 class Session
@@ -45,15 +45,12 @@ class Session
     void start();
     void stop();
 
-    void mainLoop();
-    void stopMainLoop();
-
     void getCommands();
     void receiveCommands(std::set<uint32_t> ids);
     void addCommand(tprl::RLCommand * command);
 
     TPProto::AdminLayer * getAdminLayer() const;
-    tprl::Console * getConsole() const;
+    Console * getConsole() const;
     ConsoleLogger * getLogger() const;
 
   private:
@@ -62,14 +59,12 @@ class Session
 
     static Session * myInstance;
 
-    tprl::Console * console;
+    Console * console;
     std::set<tprl::RLCommand*> commands;
 
     ConsoleLogger * logger;
     TPProto::SimpleEventLoop * eventloop;
     TPProto::AdminLayer * layer;
-
-    volatile bool halt;
 
 };
 

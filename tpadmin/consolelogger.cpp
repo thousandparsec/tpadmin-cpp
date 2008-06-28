@@ -21,6 +21,8 @@
 #include <iostream>
 #include <time.h>
 
+#include <tprl/console.h>
+
 #include "session.h"
 
 #include "consolelogger.h"
@@ -40,6 +42,8 @@ void ConsoleLogger::error(const char * mesg, ...)
 
     strftime(timeStr, 30, "%F %H:%M:%S", localtime(&currTime));
     std::cout << "\r" << timeStr << "\e[31;1m < Error > \e[0m" << mesg << std::endl;
+
+    tprl::Console::getConsole()->redrawLineForced();
 }
 
 void ConsoleLogger::warning(const char * mesg, ...)
@@ -49,6 +53,8 @@ void ConsoleLogger::warning(const char * mesg, ...)
 
     strftime(timeStr, 30, "%F %H:%M:%S", localtime(&currTime));
     std::cout << "\r" << timeStr << "\e[33;1m <Warning> \e[0m" << mesg << std::endl;
+
+    tprl::Console::getConsole()->redrawLineForced();
 }
 
 void ConsoleLogger::info(const char * mesg, ...)
@@ -58,6 +64,8 @@ void ConsoleLogger::info(const char * mesg, ...)
 
     strftime(timeStr, 30, "%F %H:%M:%S", localtime(&currTime));
     std::cout << "\r" << timeStr << "\e[32;1m < Info  > \e[0m" << mesg << std::endl;
+
+    tprl::Console::getConsole()->redrawLineForced();
 }
 
 void ConsoleLogger::debug(const char * mesg, ...)
@@ -67,5 +75,7 @@ void ConsoleLogger::debug(const char * mesg, ...)
 
     strftime(timeStr, 30, "%F %H:%M:%S", localtime(&currTime));
     std::cout << "\r" << timeStr << " < Debug > " << mesg << std::endl;
+
+    tprl::Console::getConsole()->redrawLineForced();
 }
 
