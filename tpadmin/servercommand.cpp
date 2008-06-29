@@ -41,5 +41,28 @@ ServerCommand::~ServerCommand()
 
 void ServerCommand::action(const std::string & cmdline)
 {
-    //TODO - check params, pack and send a Command frame
+    size_t pcurr = 0, pprev = -1;
+    bool done = false;
+    unsigned int n = 0;
+
+    // fill parameters
+    for(std::list<TPProto::CommandParameter*>::iterator itcurr = params.begin(); itcurr != params.end(); ++itcurr){
+        pcurr = cmdline.find(' ', pcurr);
+        if(pcurr == std::string::npos)
+            done = true;
+
+        if(!(*itcurr)->setValueFromString(cmdline.substr(pprev + 1, pcurr)))
+            break;
+        pprev = pcurr;
+
+        n++;
+        if(done)
+            break;
+    }
+
+    if(n == params.size()){
+        // pack and send a command frame
+    }else{
+        // print usage
+    }
 }
