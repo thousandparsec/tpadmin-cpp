@@ -19,7 +19,7 @@
  */
 
 #include <sstream>
-#include <string.h>
+#include <string>
 #include <boost/bind.hpp>
 
 #include <tprl/rlcommand.h>
@@ -31,6 +31,7 @@
 #include "console.h"
 #include "consolelogger.h"
 #include "clientasl.h"
+#include "servercommand.h"
 
 #include "session.h"
 
@@ -149,10 +150,19 @@ void Session::stop()
 void Session::getCommands()
 {
     layer->getCommandDescCache()->requestCommandTypes(boost::bind(&Session::receiveCommands, this, _1));
+    logger->info("Requested command list from server.");
 }
 
 void Session::receiveCommands(std::set<uint32_t> ids)
 {
+    for(std::set<uint32_t>::iterator itcurr = ids.begin(); itcurr != ids.end(); ++itcurr){
+        layer->getCommandDescCache()->requestCommandDescription((*itcurr), boost::bind(&Session::receiveCommandDesc, this, _1));
+    }
+}
+
+void Session::receiveCommandDesc(boost::shared_ptr<TPProto::CommandDescription> cd)
+{
+    addCommand(new ServerCommand(cd));
 }
 
 void Session::addCommand(tprl::RLCommand * command)
@@ -189,10 +199,10 @@ Session::Session()
 
     commands.clear();
 
-    commands.insert(new QuitCommand());
-    commands.insert(new OpenCommand());
-    commands.insert(new LoginCommand());
-    commands.insert(new CloseCommand());
+    addCommand(new QuitCommand());
+    addCommand(new OpenCommand());
+    addCommand(new LoginCommand());
+    addCommand(new CloseCommand());
 }
 
 Session::~Session()

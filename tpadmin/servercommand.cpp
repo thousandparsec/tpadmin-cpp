@@ -1,6 +1,6 @@
-/*  ClientASL
+/*  ServerCommand
  *
- *  Copyright (C) 2008  Lee Begg and the Thousand Parsec Project
+ *  Copyright (C) 2008 Aaron Mavrinac and the Thousand Parsec Project
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,34 +18,28 @@
  *
  */
 
-#include "session.h"
-#include "consolelogger.h"
+#include <tpproto/commanddesc.h>
+#include <tpproto/commandparameter.h>
 
-#include "clientasl.h"
+#include "servercommand.h"
 
-ClientASL::ClientASL()
+ServerCommand::ServerCommand() : tprl::RLCommand()
 {
 }
 
-ClientASL::~ClientASL()
+ServerCommand::ServerCommand(boost::shared_ptr<TPProto::CommandDescription> cd) : tprl::RLCommand()
+{
+    name = cd->getName();
+    help = cd->getDescription();
+    ctype = cd->getCommandType();
+    params = cd->getParameters();
+}
+
+ServerCommand::~ServerCommand()
 {
 }
 
-void ClientASL::connected()
+void ServerCommand::action(const std::string & cmdline)
 {
-}
-
-bool ClientASL::redirected(const std::string & url)
-{
-    return false;
-}
-
-void ClientASL::disconnected()
-{
-}
-
-void ClientASL::loggedIn(bool state)
-{
-    if(state)
-        Session::getSession()->getCommands();
+    //TODO - check params, pack and send a Command frame
 }

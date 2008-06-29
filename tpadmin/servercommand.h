@@ -1,4 +1,4 @@
-/*  Session class
+/*  ServerCommand
  *
  *  Copyright (C) 2008 Aaron Mavrinac and the Thousand Parsec Project
  *
@@ -18,56 +18,32 @@
  *
  */
 
-#ifndef SESSION_H
-#define SESSION_H
+#ifndef SERVERCOMMAND_H
+#define SERVERCOMMAND_H
 
-#include <set>
+#include <string>
+#include <list>
 #include <boost/shared_ptr.hpp>
 
-namespace tprl
-{
-    class RLCommand;
-}
+#include <tprl/rlcommand.h>
 
 namespace TPProto
 {
-    class AdminLayer;
-    class SimpleEventLoop;
     class CommandDescription;
+    class CommandParameter;
 }
 
-class Console;
-class ConsoleLogger;
-
-class Session
-{
+class ServerCommand : public tprl::RLCommand{
   public:
-    static Session * getSession();
+    ServerCommand();
+    ServerCommand(boost::shared_ptr<TPProto::CommandDescription> cd);
+    virtual ~ServerCommand();
 
-    void start();
-    void stop();
-
-    void getCommands();
-    void receiveCommands(std::set<uint32_t> ids);
-    void receiveCommandDesc(boost::shared_ptr<TPProto::CommandDescription> cd);
-    void addCommand(tprl::RLCommand * command);
-
-    TPProto::AdminLayer * getAdminLayer() const;
-    Console * getConsole() const;
-    ConsoleLogger * getLogger() const;
+    void action(const std::string & cmdline);
 
   private:
-    Session();
-    virtual ~Session();
-
-    static Session * myInstance;
-
-    Console * console;
-    std::set<tprl::RLCommand*> commands;
-
-    ConsoleLogger * logger;
-    TPProto::SimpleEventLoop * eventloop;
-    TPProto::AdminLayer * layer;
+    int ctype;
+    std::list<TPProto::CommandParameter*> params;
 
 };
 
