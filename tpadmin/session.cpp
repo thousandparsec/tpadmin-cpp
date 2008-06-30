@@ -162,7 +162,9 @@ void Session::receiveCommands(std::set<uint32_t> ids)
 
 void Session::receiveCommandDesc(boost::shared_ptr<TPProto::CommandDescription> cd)
 {
-    addCommand(new ServerCommand(cd));
+    ServerCommand * ncmd = new ServerCommand();
+    ncmd->setCommandType(cd);
+    addCommand(ncmd);
 }
 
 void Session::addCommand(tprl::RLCommand * command)

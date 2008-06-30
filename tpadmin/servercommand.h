@@ -36,14 +36,16 @@ namespace TPProto
 class ServerCommand : public tprl::RLCommand{
   public:
     ServerCommand();
-    ServerCommand(boost::shared_ptr<TPProto::CommandDescription> cd);
     virtual ~ServerCommand();
 
     void action(const std::string & cmdline);
 
+    void setCommandType(boost::shared_ptr<TPProto::CommandDescription> cd);
+
   private:
-    int ctype;
     std::list<TPProto::CommandParameter*> params;
+
+    boost::shared_ptr<TPProto::CommandDescription> desc;
 
 };
 

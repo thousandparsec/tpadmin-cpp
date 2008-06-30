@@ -18,21 +18,17 @@
  *
  */
 
+#include <tpproto/adminlayer.h>
 #include <tpproto/commanddesc.h>
 #include <tpproto/commandparameter.h>
+
+#include "session.h"
+#include "consolelogger.h"
 
 #include "servercommand.h"
 
 ServerCommand::ServerCommand() : tprl::RLCommand()
 {
-}
-
-ServerCommand::ServerCommand(boost::shared_ptr<TPProto::CommandDescription> cd) : tprl::RLCommand()
-{
-    name = cd->getName();
-    help = cd->getDescription();
-    ctype = cd->getCommandType();
-    params = cd->getParameters();
 }
 
 ServerCommand::~ServerCommand()
@@ -61,8 +57,19 @@ void ServerCommand::action(const std::string & cmdline)
     }
 
     if(n == params.size()){
-        // pack and send a command frame
+        // send a command frame
+        Session::getSession()->getAdminLayer()->sendCommand(desc, params);
     }else{
-        // print usage
+        Session::getSession()->getLogger()->error("Invalid command parameters.");
     }
 }
+
+void ServerCommand::setCommandType(boost::shared_ptr<TPProto::CommandDescription> cd)
+{
+    name = cd->getName();
+    help = cd->getDescription();
+
+    desc = cd;
+    params = cd->getParameters();
+}
+
