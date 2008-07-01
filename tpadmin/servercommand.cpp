@@ -37,23 +37,18 @@ ServerCommand::~ServerCommand()
 
 void ServerCommand::action(const std::string & cmdline)
 {
-    size_t pcurr = 0, pprev = -1;
-    bool done = false;
     unsigned int n = 0;
+    size_t pprev = cmdline.find_first_not_of(' ', 0);
+    size_t pcurr = cmdline.find_first_of(' ', pprev);
 
-    // fill parameters
     for(std::list<TPProto::CommandParameter*>::iterator itcurr = params.begin(); itcurr != params.end(); ++itcurr){
-        pcurr = cmdline.find(' ', pcurr);
-        if(pcurr == std::string::npos)
-            done = true;
-
-        if(!(*itcurr)->setValueFromString(cmdline.substr(pprev + 1, pcurr)))
+        if(pcurr == std::string::npos && pprev == std::string::npos)
             break;
-        pprev = pcurr;
-
+        if(!(*itcurr)->setValueFromString(cmdline.substr(pprev, pcurr - pprev)))
+            break;
+        pprev = cmdline.find_first_not_of(' ', pcurr);
+        pcurr = cmdline.find_first_of(' ', pprev);
         n++;
-        if(done)
-            break;
     }
 
     if(n == params.size()){
