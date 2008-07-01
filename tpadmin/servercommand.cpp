@@ -41,6 +41,8 @@ void ServerCommand::action(const std::string & cmdline)
     size_t pprev = cmdline.find_first_not_of(' ', 0);
     size_t pcurr = cmdline.find_first_of(' ', pprev);
 
+    params = desc->getParameters();
+
     for(std::list<TPProto::CommandParameter*>::iterator itcurr = params.begin(); itcurr != params.end(); ++itcurr){
         if(pcurr == std::string::npos && pprev == std::string::npos)
             break;
