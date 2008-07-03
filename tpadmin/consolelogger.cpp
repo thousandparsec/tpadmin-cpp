@@ -27,7 +27,7 @@
 
 #include "consolelogger.h"
 
-ConsoleLogger::ConsoleLogger()
+ConsoleLogger::ConsoleLogger() : dispdebug(false)
 {
 }
 
@@ -70,12 +70,18 @@ void ConsoleLogger::info(const char * mesg, ...)
 
 void ConsoleLogger::debug(const char * mesg, ...)
 {
-    char timeStr[30];
-    time_t currTime = time(NULL);
+    if(dispdebug){
+        char timeStr[30];
+        time_t currTime = time(NULL);
 
-    strftime(timeStr, 30, "%F %H:%M:%S", localtime(&currTime));
-    std::cout << "\r" << timeStr << " < Debug > " << mesg << std::endl;
+        strftime(timeStr, 30, "%F %H:%M:%S", localtime(&currTime));
+        std::cout << "\r" << timeStr << " < Debug > " << mesg << std::endl;
 
-    tprl::Console::getConsole()->redrawLineForced();
+        tprl::Console::getConsole()->redrawLineForced();
+    }
 }
 
+void ConsoleLogger::toggleDebug()
+{
+    dispdebug = !dispdebug;
+}

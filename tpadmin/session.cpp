@@ -117,6 +117,21 @@ class CloseCommand : public tprl::RLCommand
     }
 };
 
+class DebugCommand : public tprl::RLCommand
+{
+  public:
+    DebugCommand() : tprl::RLCommand()
+    {
+        name = "debug";
+        help = "Toggles whether to display debug-level log messages.";
+    }
+
+    void action(const std::string & cmdline)
+    {
+        Session::getSession()->getLogger()->toggleDebug();
+    }
+};
+
 Session * Session::myInstance = NULL;
 
 Session * Session::getSession()
@@ -214,6 +229,7 @@ Session::Session()
     addCommand(new OpenCommand());
     addCommand(new LoginCommand());
     addCommand(new CloseCommand());
+    addCommand(new DebugCommand());
     local = commands.size();
 }
 

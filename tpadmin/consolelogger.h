@@ -32,6 +32,11 @@ class ConsoleLogger : public TPProto::Logger{
     void warning(const char * mesg, ...);
     void info(const char * mesg, ...);
     void debug(const char * mesg, ...);
+
+    void toggleDebug();
+
+  private:
+    bool dispdebug;
 };
 
 #endif
