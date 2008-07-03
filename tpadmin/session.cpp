@@ -110,8 +110,10 @@ class CloseCommand : public tprl::RLCommand
 
     void action(const std::string & cmdline)
     {
-        if(Session::getSession()->getAdminLayer()->getStatus() != TPProto::asDisconnected)
+        if(Session::getSession()->getAdminLayer()->getStatus() != TPProto::asDisconnected){
             Session::getSession()->getAdminLayer()->disconnect();
+            Session::getSession()->resetCommands();
+        }
     }
 };
 
@@ -172,6 +174,14 @@ void Session::addCommand(tprl::RLCommand * command)
     commands.insert(command);
 }
 
+void Session::resetCommands()
+{
+    std::set<tprl::RLCommand*>::iterator eol = commands.begin();
+    for(unsigned int i = 0; i < local; i++)
+        eol++;
+    commands.erase(eol, commands.end());
+}
+
 TPProto::AdminLayer * Session::getAdminLayer() const
 {
     return layer;
@@ -200,11 +210,11 @@ Session::Session()
     layer->setAdminStatusListener(new ClientASL());
 
     commands.clear();
-
     addCommand(new QuitCommand());
     addCommand(new OpenCommand());
     addCommand(new LoginCommand());
     addCommand(new CloseCommand());
+    local = commands.size();
 }
 
 Session::~Session()

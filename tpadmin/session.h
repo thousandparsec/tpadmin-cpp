@@ -50,7 +50,9 @@ class Session
     void getCommands();
     void receiveCommands(std::set<uint32_t> ids);
     void receiveCommandDesc(boost::shared_ptr<TPProto::CommandDescription> cd);
+
     void addCommand(tprl::RLCommand * command);
+    void resetCommands();
 
     TPProto::AdminLayer * getAdminLayer() const;
     Console * getConsole() const;
@@ -64,6 +66,7 @@ class Session
 
     Console * console;
     std::set<tprl::RLCommand*> commands;
+    unsigned int local;
 
     ConsoleLogger * logger;
     TPProto::SimpleEventLoop * eventloop;
