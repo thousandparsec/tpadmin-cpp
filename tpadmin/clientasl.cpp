@@ -42,6 +42,8 @@ bool ClientASL::redirected(const std::string & url)
 
 void ClientASL::disconnected()
 {
+    Session::getSession()->resetCommands();
+    Session::getSession()->getLogger()->warning("Disconnected from server.");
 }
 
 void ClientASL::loggedIn(bool state)

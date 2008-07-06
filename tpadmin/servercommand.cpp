@@ -37,6 +37,11 @@ ServerCommand::~ServerCommand()
 
 void ServerCommand::action(const std::string & cmdline)
 {
+    if(Session::getSession()->getAdminLayer()->getStatus() != TPProto::asLoggedIn){
+        Session::getSession()->getLogger()->error("Not logged in to server.");
+        return;
+    }
+
     unsigned int n = 0;
     size_t pprev = cmdline.find_first_not_of(' ', 0);
     size_t pcurr = cmdline.find_first_of(' ', pprev);

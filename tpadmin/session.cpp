@@ -112,7 +112,6 @@ class CloseCommand : public tprl::RLCommand
     {
         if(Session::getSession()->getAdminLayer()->getStatus() != TPProto::asDisconnected){
             Session::getSession()->getAdminLayer()->disconnect();
-            Session::getSession()->resetCommands();
         }
     }
 };
