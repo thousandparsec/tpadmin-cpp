@@ -133,6 +133,9 @@ class DebugCommand : public tprl::RLCommand
 
 Session * Session::myInstance = NULL;
 
+/* getSession
+ * Returns a reference to this unique instance of Session.
+ */
 Session * Session::getSession()
 {
     if(myInstance == NULL)
@@ -140,35 +143,54 @@ Session * Session::getSession()
     return myInstance;
 }
 
+/* start
+ * Starts the session.
+ */
 void Session::start()
 {
+    // prepare the console
     console = new Console();
     console->setCommandSet(&commands);
     if(console->connect())
         logger->debug("Console connected");
     console->start();
 
+    // add the console to the event loop and start it
     eventloop->listenForSocketRead(console);
     eventloop->runEventLoop();
 }
 
+/* stop
+ * Stops the session.
+ */
 void Session::stop()
 {
+    // stop the console
     console->disconnect();
     console->stop();
 
+    // disconnect from the server
     if(layer->getStatus() != TPProto::asDisconnected)
         layer->disconnect();
 
+    // stop the event loop
     eventloop->endEventLoop();
 }
 
+/* getCommands
+ * Gets a list of command IDs from the server.
+ */
 void Session::getCommands()
 {
     layer->getCommandDescCache()->requestCommandTypes(boost::bind(&Session::receiveCommands, this, _1));
     logger->info("Requested command list from server.");
 }
 
+/* receiveCommands
+ * Callback for the list of command IDs.
+ * Requests descriptions for each command type.
+ * ids - The list of command type IDs.
+ */
 void Session::receiveCommands(std::set<uint32_t> ids)
 {
     for(std::set<uint32_t>::iterator itcurr = ids.begin(); itcurr != ids.end(); ++itcurr){
@@ -176,6 +198,11 @@ void Session::receiveCommands(std::set<uint32_t> ids)
     }
 }
 
+/* receiveCommandDesc
+ * Callback for comamnd descriptions.
+ * Creates new ServerCommands for each command and adds them to the local set.
+ * cd - The command description.
+ */
 void Session::receiveCommandDesc(boost::shared_ptr<TPProto::CommandDescription> cd)
 {
     ServerCommand * ncmd = new ServerCommand();
@@ -183,11 +210,18 @@ void Session::receiveCommandDesc(boost::shared_ptr<TPProto::CommandDescription> 
     addCommand(ncmd);
 }
 
+/* addCommand
+ * Adds a command to the local set.
+ * command - The (tprl) command to add.
+ */
 void Session::addCommand(tprl::RLCommand * command)
 {
     commands.insert(command);
 }
 
+/* resetCommands
+ * Clears all non-builtin commands from the local set.
+ */
 void Session::resetCommands()
 {
     std::set<tprl::RLCommand*>::iterator eol = commands.begin();
@@ -196,27 +230,41 @@ void Session::resetCommands()
     commands.erase(eol, commands.end());
 }
 
+/* getAdminLayer
+ * Returns a reference to this session's AdminLayer.
+ */
 TPProto::AdminLayer * Session::getAdminLayer() const
 {
     return layer;
 }
 
+/* getConsole
+ * Returns a reference to this session's console.
+ */
 Console * Session::getConsole() const
 {
     return console;
 }
 
+/* getLogger
+ * Returns a reference to this session's logger.
+ */
 ConsoleLogger * Session::getLogger() const
 {
     return logger;
 }
 
+/* Default constructor
+ * Instantiates AdminLayer, event loop, and logger.
+ * Adds builtin commands to the local set.
+ */
 Session::Session()
 {
     logger = new ConsoleLogger();
 
     eventloop = new TPProto::SimpleEventLoop();
 
+    // configure AdminLayer
     layer = new TPProto::AdminLayer();
     layer->setClientString("tpadmin-cpp/0.0.1");
     layer->setLogger(logger);
@@ -232,6 +280,9 @@ Session::Session()
     local = commands.size();
 }
 
+/* Destructor
+ * Deletes console, AdminLayer, event loop, and logger.
+ */
 Session::~Session()
 {
     if(console != NULL)

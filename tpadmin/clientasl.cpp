@@ -42,12 +42,14 @@ bool ClientASL::redirected(const std::string & url)
 
 void ClientASL::disconnected()
 {
+    // reset the local command set on disconnect
     Session::getSession()->resetCommands();
     Session::getSession()->getLogger()->warning("Disconnected from server.");
 }
 
 void ClientASL::loggedIn(bool state)
 {
+    // retrieve the list of commands on login
     if(state)
         Session::getSession()->getCommands();
 }

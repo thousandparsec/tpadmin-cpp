@@ -37,6 +37,7 @@ ServerCommand::~ServerCommand()
 
 void ServerCommand::action(const std::string & cmdline)
 {
+    // verify that the session is logged in
     if(Session::getSession()->getAdminLayer()->getStatus() != TPProto::asLoggedIn){
         Session::getSession()->getLogger()->error("Not logged in to server.");
         return;
@@ -46,8 +47,10 @@ void ServerCommand::action(const std::string & cmdline)
     size_t pprev = cmdline.find_first_not_of(' ', 0);
     size_t pcurr = cmdline.find_first_of(' ', pprev);
 
+    // repopulate the parameter list from the description
     params = desc->getParameters();
 
+    // parse the command line into the command parameters
     for(std::list<TPProto::CommandParameter*>::iterator itcurr = params.begin(); itcurr != params.end(); ++itcurr){
         if(pcurr == std::string::npos && pprev == std::string::npos)
             break;

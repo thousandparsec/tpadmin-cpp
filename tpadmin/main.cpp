@@ -30,12 +30,15 @@ void sigIntHandler(int sig)
 
 int main(int argc, char ** argv)
 {
+    // stop session on SIGINT or SIGTERM
     signal(SIGINT, sigIntHandler);
     signal(SIGTERM, sigIntHandler);
 
+    // start the session
     Session * mySession = Session::getSession();
     mySession->start();
 
+    // trailing newline
     std::cout << std::endl;
 
     return 0;

@@ -34,6 +34,7 @@ class ConsoleConnection : public TPProto::Connection{
     ConsoleConnection(){}
     ~ConsoleConnection(){}
 
+    // do non-blocking readline when stdin has data
     void readyToRead()
     {
         tprl::Console::getConsole()->readLine_nb_inputReady();
@@ -44,11 +45,13 @@ class ConsoleConnection : public TPProto::Connection{
 
 Console::Console() : TPSocket(), status(0)
 {
+    // create and prepare a tprl console
     rlconsole = tprl::Console::getConsole();
     rlconsole->setCatchSignals(false);
     rlconsole->setUseHistory(true);
     rlconsole->setPrompt("tpadmin-cpp> ");
 
+    // attach to a tpproto connection
     setConnection(new ConsoleConnection());
 }
 
