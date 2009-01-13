@@ -23,6 +23,7 @@
 #include <boost/bind.hpp>
 
 #include <tprl/rlcommand.h>
+#include <tprl/commandalias.h>
 
 #include <tpproto/adminlayer.h>
 #include <tpproto/simpleeventloop.h>
@@ -272,11 +273,16 @@ Session::Session()
     layer->setAdminStatusListener(new ClientASL());
 
     commands.clear();
-    addCommand(new QuitCommand());
+    tprl::RLCommand* quit = new QuitCommand();
+    addCommand(quit);
     addCommand(new OpenCommand());
     addCommand(new LoginCommand());
     addCommand(new CloseCommand());
     addCommand(new DebugCommand());
+    tprl::CommandAlias* alias = new tprl::CommandAlias("exit");
+    alias->setTarget(quit);
+    addCommand(alias);
+
     local = commands.size();
 }
 
