@@ -23,6 +23,7 @@
 
 #include <set>
 #include <boost/shared_ptr.hpp>
+#include <stdint.h>
 
 namespace tprl
 {
