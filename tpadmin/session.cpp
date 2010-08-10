@@ -267,7 +267,7 @@ Session::Session()
 
     // configure AdminLayer
     layer = new TPProto::AdminLayer();
-    layer->setClientString("tpadmin-cpp/0.0.1");
+    layer->setClientString("tpadmin-cpp/0.1.0");
     layer->setLogger(logger);
     layer->setEventLoop(eventloop);
     layer->setAdminStatusListener(new ClientASL());

@@ -1,9 +1,9 @@
-AC_INIT([tpadmin-cpp],[0.0.1],[mavrinac@gmail.com])
+AC_INIT([tpadmin-cpp],[0.1.0],[mavrinac@gmail.com])
 AC_CONFIG_SRCDIR(tpadmin/main.cpp)
 
 AC_CANONICAL_TARGET([])
 
-AM_INIT_AUTOMAKE(tpadmin-cpp, 0.0.1)
+AM_INIT_AUTOMAKE(tpadmin-cpp, 0.1.0)
 AM_CONFIG_HEADER(config.h)
 
 AM_MAINTAINER_MODE
